@@ -1,0 +1,163 @@
+openapi: 3.0.3
+info:
+  title: Car Catalog API
+servers:
+  - url: http://localhost:8080
+paths:
+  /cars:
+    get:
+      summary: Get all cars
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            description:
+                Number of cars to skip, default is 0, must be bigger or equal to 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description:
+            Maximum number of cars to return, default is 100, must be bigger or equal to 0
+        - name: regNum
+          in: query
+          schema:
+            type: string
+          description:
+            Car registration number
+        - name: mark
+          in: query
+          schema:
+            type: string
+          description:
+            Car mark
+        - name: model
+          in: query
+          schema:
+            type: string
+          description:
+            Car model
+        - name: year
+          in: query
+          schema:
+            type: integer
+          description:
+              Car year of manufacture
+      responses:
+        '200':
+          description: Cars were successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Car'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+    post:
+      summary: Add new cars
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Car'
+      responses:
+        '201':
+          description: Cars were successfully added
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Car'
+        '400':
+          description: Bad request
+        '409':
+          description: Car already exists
+        '500':
+          description: Internal server error
+    put:
+      summary: Update existing cars
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Car'
+      responses:
+        '200':
+          description: Cars were successfully updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Car'
+        '400':
+          description: Bad request
+        '404':
+          description: Car not found
+        '409':
+          description: Car already exists
+        '500':
+          description: Internal server error
+  /cars/{id}:
+    delete:
+      summary: Delete a car
+      parameters:
+        - name: id
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Car was successfully deleted
+        '400':
+          description: Bad request
+        '404':
+          description: Car not found
+        '500':
+          description: Internal server error
+components:
+  schemas:
+    Car:
+      required:
+        - regNum
+        - mark
+        - model
+        - owner
+      type: object
+      properties:
+        regNum:
+          type: string
+          example: X123XX150
+        mark:
+          type: string
+          example: Lada
+        model:
+          type: string
+          example: Vesta
+        year:
+          type: integer
+          example: 2002
+        owner:
+          $ref: '#/components/schemas/People'
+    People:
+      required:
+        - name
+        - surname
+      type: object
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        patronymic:
+          type: string

@@ -1,0 +1,25 @@
+version: "3.2"
+services:
+  db:
+    image: postgres:12
+    ports:
+      - "5432:5432"
+    env_file: ".env"
+    volumes:
+        - ./postgres/migrations:/docker-entrypoint-initdb.d
+        - ./postgres/data:/var/lib/postgresql/data
+  app:
+    depends_on:
+      db:
+        condition: service_started
+    build:
+        context: .
+        dockerfile: Dockerfile
+    env_file: ".env"
+    ports:
+      - "8080:8080"
+    links:
+      - db
+volumes:
+  data: {}
+  migrations: {}
